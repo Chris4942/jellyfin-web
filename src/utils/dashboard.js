@@ -18,6 +18,10 @@ import itemIdentifier from '../components/itemidentifier/itemidentifier';
 import { getLocationSearch } from './url.ts';
 import { queryClient } from './query/queryClient';
 
+/**
+ * @typedef { import('jellyfin-apiclient').ApiClient } ApiClient
+ */
+
 export function getCurrentUser() {
     return window.ApiClient.getCurrentUser(false);
 }
@@ -167,6 +171,7 @@ export function processErrorResponse(response) {
     });
 }
 
+/** @param {{message: string, title: string} | string} options */
 export function alert(options) {
     if (typeof options == 'string') {
         toast({
