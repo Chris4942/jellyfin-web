@@ -124,7 +124,7 @@ function centerFocus(elem: Element, horiz: boolean, on: boolean) {
 }
 
 /* eslint-disable-next-line sonarjs/cognitive-complexity */
-export function show(options: Options) {
+export function show(options: Options): Promise<string | null> {
     // items
     // positionTo
     // showCancel

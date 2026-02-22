@@ -48,6 +48,9 @@ function getBaseProfileOptions(item) {
     };
 }
 
+/**
+ * @returns Promise<any>
+ */
 function getDeviceProfile(item) {
     return new Promise(function (resolve) {
         let profile;
@@ -122,6 +125,9 @@ function getDeviceProfile(item) {
     });
 }
 
+/**
+ * @returns {number | string}
+ */
 function generateDeviceId() {
     const keys = [];
 
@@ -134,6 +140,9 @@ function generateDeviceId() {
     return new Date().getTime();
 }
 
+/**
+ * @returns {number | string}
+ */
 function getDeviceId() {
     if (!deviceId) {
         const key = '_deviceId2';
@@ -149,6 +158,7 @@ function getDeviceId() {
     return deviceId;
 }
 
+/** @returns {string?} */
 function getDeviceName() {
     if (deviceName) {
         return deviceName;
@@ -194,6 +204,7 @@ function supportsHtmlMediaAutoplay() {
     return !browser.mobile;
 }
 
+/**@returns {boolean}*/
 function supportsCue() {
     try {
         const video = document.createElement('video');
@@ -228,6 +239,7 @@ function onAppHidden() {
 }
 
 const supportedFeatures = function () {
+    /**@type {AppFeature[]}*/
     const features = [];
 
     if (navigator.share) {
@@ -296,8 +308,8 @@ const supportedFeatures = function () {
 }();
 
 /**
-     * Do exit according to platform
-     */
+ * Do exit according to platform
+ */
 function doExit() {
     try {
         if (window.NativeShell?.AppHost?.exit) {
@@ -314,11 +326,12 @@ function doExit() {
     }
 }
 
+/** @type{Promise<string?>?} */
 let exitPromise;
 
 /**
-     * Ask user for exit
-     */
+ * Ask user for exit
+ */
 function askForExit() {
     if (exitPromise) {
         return;
@@ -341,7 +354,9 @@ function askForExit() {
     });
 }
 
+/** @type {string | number | null} */
 let deviceId;
+/** @type {string?} */
 let deviceName;
 
 export const appHost = {
@@ -437,7 +452,9 @@ export const appHost = {
 };
 
 let isHidden = false;
+/** @type{string?} */
 let hidden;
+/** @type{string?} */
 let visibilityChange;
 
 if (typeof document.hidden !== 'undefined') {
