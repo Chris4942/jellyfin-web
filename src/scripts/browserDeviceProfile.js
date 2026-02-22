@@ -89,6 +89,10 @@ function canPlayHlsWithMSE() {
     return window.MediaSource != null; /* eslint-disable-line compat/compat */
 }
 
+/**
+ * @param {HTMLVideoElement} videoTestElement
+ * @returns {string | boolean} But I think that the intent is the string is treated like a boolean
+ */
 function supportsAc3(videoTestElement) {
     if (browser.edgeUwp || browser.tizen || browser.web0s) {
         return true;
@@ -426,6 +430,13 @@ function getSpeakerCount() {
     return maxChannelCount;
 }
 
+/**
+ * @param {{
+ *   audioChannels: number?,
+ * }} options
+ * @param {HTMLVideoElement} videoTestElement
+ * @returns {number}
+ */
 function getPhysicalAudioChannels(options, videoTestElement) {
     const allowedAudioChannels = parseInt(userSettings.allowedAudioChannels(), 10);
 
@@ -482,6 +493,11 @@ export function canPlaySecondaryAudio(videoTestElement) {
         && (browser.web0sVersion >= 4.0 || !browser.web0sVersion);
 }
 
+/**
+ * @param {{
+ *
+ * }?} options
+ */
 export default function (options) {
     options = options || {};
 
