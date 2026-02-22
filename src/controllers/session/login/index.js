@@ -65,6 +65,10 @@ function authenticateUserByName(page, apiClient, url, username, password) {
         });
 }
 
+/**
+ * @param {ApiClient} apiClient
+ * @param {string} targetUrl
+ */
 function authenticateQuickConnect(apiClient, targetUrl) {
     const url = apiClient.getUrl('/QuickConnect/Initiate');
     apiClient.ajax({ type: 'POST', url }, true).then(res => res.json()).then(function (json) {
