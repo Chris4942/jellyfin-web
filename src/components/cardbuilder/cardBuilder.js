@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 /**
  * Module for building cards from item data.
  * @module components/cardBuilder/cardBuilder
@@ -43,13 +41,14 @@ import {
 } from './utils/builder';
 import { getBackdropShape, getPortraitShape, getSquareShape } from './utils/shape';
 import { getCardImageUrl } from './utils/url';
+import { ApiClient } from 'jellyfin-apiclient';
 
 const enableFocusTransform = !browser.slow && !browser.edge;
 
 /**
  * Generate the HTML markup for cards for a set of items.
- * @param items - The items used to generate cards.
- * @param [options] - The options of the cards.
+ * @param {any[]} items - The items used to generate cards.
+ * @param {Object} [options] - The options of the cards.
  * @returns {string} The HTML markup for the cards.
  */
 export function getCardsHtml(items, options) {
@@ -134,9 +133,31 @@ export function setCardData(items, options) {
 }
 
 /**
+ * @typedef { import('components/cardbuilder/utils/shape').CardShape } CardShape
+ * @typedef {{
+ *   sectionTitleTagName: string
+ *   shape: CardShape
+ *   serverId: string
+ *   indexBy: 'PremiereDate' | 'ProductionYear' | 'CommunityRating'
+ *   rows?: number
+ *   action: ItemAction
+ * }} BuildCardsOptions
+ *
+ * @typedef {{
+ *   ServerId?: string
+ *   PremiereDate?: string
+ *   ProductionYear?: string
+ *   CommunityRating?: number
+ *   IsFolder: boolean
+ *   MediaType: 'Photo'
+ *   PrimaryImageAspectRatio: any
+ * }} BuildCardItem
+ */
+
+/**
  * Generates the internal HTML markup for cards.
- * @param {Object} items - Items for which to generate the markup.
- * @param {Object} options - Options for generating the markup.
+ * @param {BuildCardItem[]} items - Items for which to generate the markup.
+ * @param {BuildCardsOptions} options - Options for generating the markup.
  * @returns {string} The internal HTML markup of the cards.
  */
 function buildCardsHtmlInternal(items, options) {
@@ -168,6 +189,7 @@ function buildCardsHtmlInternal(items, options) {
         }
 
         if (options.indexBy) {
+            /** @type {string | null | undefined} */
             let newIndexValue = '';
 
             if (options.indexBy === 'PremiereDate') {
@@ -181,6 +203,7 @@ function buildCardsHtmlInternal(items, options) {
             } else if (options.indexBy === 'ProductionYear') {
                 newIndexValue = item.ProductionYear;
             } else if (options.indexBy === 'CommunityRating') {
+                // @ts-expect-error: TODO: figure out what's going on here because I think that the NaNs get handled somehow
                 const roundedRatingDecimal = item.CommunityRating % 1 >= 0.5 ? 0.5 : 0;
                 newIndexValue = item.CommunityRating ? (Math.floor(item.CommunityRating) + roundedRatingDecimal) + '+' : null;
             }
@@ -227,7 +250,7 @@ function buildCardsHtmlInternal(items, options) {
             hasOpenRow = true;
         }
 
-        html += buildCard(i, item, apiClient, options);
+        html += buildCard(i, item, /** @type { ApiClient } */ (apiClient), options);
 
         itemsInRow++;
 
@@ -255,7 +278,7 @@ function buildCardsHtmlInternal(items, options) {
 
 /**
  * Generates the HTML markup for a card's text.
- * @param {Array} lines - Array containing the text lines.
+ * @param {string[]} lines - Array containing the text lines.
  * @param {string} cssClass - Base CSS class to use for the lines.
  * @param {boolean} forceLines - Flag to force the rendering of all lines.
  * @param {boolean} isOuterFooter - Flag to mark the text lines as outer footer.
@@ -726,9 +749,9 @@ function importRefreshIndicator() {
 /**
  * Builds the HTML markup for an individual card.
  * @param {number} index - Index of the card
- * @param {object} item - Item used to generate the card.
- * @param {object} apiClient - API client instance.
- * @param {object} options - Options used to generate the card.
+ * @param {BuildCardItem} item - Item used to generate the card.
+ * @param {ApiClient} apiClient - API client instance.
+ * @param {BuildCardsOptions} options - Options used to generate the card.
  * @returns {string} HTML markup for the generated card.
  */
 function buildCard(index, item, apiClient, options) {
