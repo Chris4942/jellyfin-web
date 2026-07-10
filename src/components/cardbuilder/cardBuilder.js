@@ -43,6 +43,41 @@ import { getBackdropShape, getPortraitShape, getSquareShape } from './utils/shap
 import { getCardImageUrl } from './utils/url';
 import { ApiClient } from 'jellyfin-apiclient';
 
+/**
+ * @typedef { import('components/cardbuilder/utils/shape').CardShape } CardShape
+ *
+ * @typedef {{
+ *   sectionTitleTagName: string
+ *   shape: CardShape
+ *   serverId: string
+ *   indexBy: 'PremiereDate' | 'ProductionYear' | 'CommunityRating'
+ *   rows?: number
+ *   action: ItemAction
+ *   showTitle: 'auto'
+ * }} BuildCardsOptions
+ *
+ * @typedef {{
+ *   Type?: 'PhotoAlbum'
+ * }} ProgramInfo
+ *
+ * @typedef {PrograInfo & {
+ *   ServerId?: string
+ *   PremiereDate?: string
+ *   ProductionYear?: string
+ *   CommunityRating?: number
+ *   IsFolder: boolean
+ *   MediaType: 'Photo'
+ *   PrimaryImageAspectRatio: any
+ *   StartDate?: string
+ *   EndDate?: string
+ *   ProgramInfo: ProgramInfo
+ * }} BuildCardItem
+ *
+ * @typedef {{
+ *   logoUrl?: string
+ * }} Urls
+ */
+
 const enableFocusTransform = !browser.slow && !browser.edge;
 
 /**
@@ -132,27 +167,6 @@ export function setCardData(items, options) {
     }
 }
 
-/**
- * @typedef { import('components/cardbuilder/utils/shape').CardShape } CardShape
- * @typedef {{
- *   sectionTitleTagName: string
- *   shape: CardShape
- *   serverId: string
- *   indexBy: 'PremiereDate' | 'ProductionYear' | 'CommunityRating'
- *   rows?: number
- *   action: ItemAction
- * }} BuildCardsOptions
- *
- * @typedef {{
- *   ServerId?: string
- *   PremiereDate?: string
- *   ProductionYear?: string
- *   CommunityRating?: number
- *   IsFolder: boolean
- *   MediaType: 'Photo'
- *   PrimaryImageAspectRatio: any
- * }} BuildCardItem
- */
 
 /**
  * Generates the internal HTML markup for cards.
@@ -331,7 +345,7 @@ function getCardTextLines(lines, cssClass, forceLines, isOuterFooter, cardLayout
 
 /**
  * Returns the air time text for the item based on the given times.
- * @param {object} item - Item used to generate the air time text.
+ * @param {BuildCardItem} item - Item used to generate the air time text.
  * @param {boolean} showAirDateTime - ISO8601 date for the start of the show.
  * @param {boolean} showAirEndTime - ISO8601 date for the end of the show.
  * @returns {string} The air time text for the item based on the given dates.
@@ -363,13 +377,13 @@ function getAirTimeText(item, showAirDateTime, showAirEndTime) {
 
 /**
  * Generates the HTML markup for the card's footer text.
- * @param {Object} item - Item used to generate the footer text.
- * @param {Object} apiClient - API client instance.
- * @param {Object} options - Options used to generate the footer text.
+ * @param {BuildCardItem} item - Item used to generate the footer text.
+ * @param {ApiClient} apiClient - API client instance.
+ * @param {BuildCardsOptions} options - Options used to generate the footer text.
  * @param {string} footerClass - CSS classes of the footer element.
  * @param {string} progressHtml - HTML markup of the progress bar element.
  * @param {Object} flags - Various flags for the footer
- * @param {Object} urls - Various urls for the footer
+ * @param {Urls} urls - Various urls for the footer
  * @returns {string} HTML markup of the card's footer text element.
  */
 function getCardFooterText(item, apiClient, options, footerClass, progressHtml, flags, urls) {
